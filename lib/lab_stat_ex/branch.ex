@@ -11,7 +11,7 @@ defmodule LabStatEx.Branch do
     belongs_to :project, LabStatEx.Project
     field :recorded_old_at, :utc_datetime
     field :notified_old_at, :utc_datetime
-    # belongs_to :user, LabStatEx.User
+    belongs_to :user, LabStatEx.User
     field :deleted_at, :utc_datetime
     field :delete_reason, :string
     timestamps()
