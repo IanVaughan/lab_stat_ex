@@ -16,14 +16,21 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
       add :star_count, :integer
       add :forks_count, :integer
       add :last_activity_at, :utc_datetime
-      add :info, :json , default: "{}"
+      add :info, :map , default: %{}
+      add :deleted_at, :utc_datetime
+      timestamps()
+    end
 
+    create table(:users) do
+      add :name, :string, null: false
+      add :email, :string
+      add :deleted_at, :utc_datetime
       timestamps()
     end
 
     create table(:branches) do
       add :name, :string, null: false
-      add :commit, :json
+      add :commit, :map
       add :merged, :boolean
       add :protected, :boolean
       add :developers_can_push, :boolean
@@ -31,7 +38,7 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
       add :project_id, references(:projects)
       add :recorded_old_at, :utc_datetime
       add :notified_old_at, :utc_datetime
-      add :user_id, :integer
+      add :user_id, references(:users)
       add :deleted_at, :utc_datetime
       add :delete_reason, :string
       timestamps()
@@ -47,6 +54,7 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
       add :created_at, :string
       add :destroy_path, :string
       add :registry_id, :integer
+      add :deleted_at, :utc_datetime
       timestamps()
     end
     create index(:images, [:registry_id])
@@ -55,9 +63,8 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
       add :sha, :string,   null: false
       add :ref, :string,   null: false
       add :status, :string, null: false
-      add :info, :json, default: "{}"
+      add :info, :map, default: "{}"
       add :project_id, references(:projects)
-
       timestamps()
     end
     create index(:pipelines, [:project_id])
@@ -71,10 +78,10 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
       add :coverage, :string
       add :started_at, :utc_datetime
       add :finished_at, :utc_datetime
-      add :user, :json, default: "{}"
-      add :commit, :json, default: "{}"
-      add :runner, :json, default: "{}"
-      add :pipeline, :json, default: "{}"
+      add :user, :map, default: "{}"
+      add :commit, :map, default: "{}"
+      add :runner, :map, default: "{}"
+      add :pipeline, :map, default: "{}"
       add :pipeline_id, references(:pipelines)
       add :trace, :string
       timestamps()
@@ -88,7 +95,7 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
       add :state, :string,  null: false
       add :web_url, :string, null: false
       add :project_id, references(:projects)
-      add :info, :json, default: "{}"
+      add :info, :map, default: "{}"
 
       timestamps()
     end
@@ -97,7 +104,7 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
     create table(:notes) do
       add :body, :string
       add :attachment, :string
-      add :author, :json, default: "{}"
+      add :author, :map, default: "{}"
       add :system, :boolean
       add :noteable_id, :integer
       add :noteable_type, :string
@@ -140,12 +147,6 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
       add :tag_push_events, :boolean
       add :repository_update_events, :boolean
       add :enable_ssl_verification, :boolean
-      timestamps()
-    end
-
-    create table(:users) do
-      add :name, :string, null: false
-      add :email, :string
       timestamps()
     end
   end
