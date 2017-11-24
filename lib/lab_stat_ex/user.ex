@@ -8,6 +8,5 @@ defmodule LabStatEx.User do
     timestamps()
 
     has_many :branches, LabStatEx.Branch
-    # has_many :projects, LabStatEx.Branch
   end
 end

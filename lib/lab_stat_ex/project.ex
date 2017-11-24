@@ -19,5 +19,8 @@ defmodule LabStatEx.Project do
     timestamps()
 
     has_many :branches, LabStatEx.Branch
+    has_many :merge_requests, LabStatEx.MergeRequest
+    has_many :project_hooks, LabStatEx.ProjectHook
+    has_many :registries, LabStatEx.Registry
   end
 end

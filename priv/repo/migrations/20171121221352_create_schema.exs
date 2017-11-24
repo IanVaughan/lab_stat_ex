@@ -46,7 +46,7 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
     create index(:branches, [:project_id])
 
     create table(:images) do
-      add :name, :string , null: false
+      add :name, :string, null: false
       add :location, :string
       add :revision, :string
       add :short_revision, :string
@@ -60,10 +60,10 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
     create index(:images, [:registry_id])
 
     create table(:pipelines) do
-      add :sha, :string,   null: false
-      add :ref, :string,   null: false
+      add :sha, :string, null: false
+      add :ref, :string, null: false
       add :status, :string, null: false
-      add :info, :map, default: "{}"
+      add :info, :map, default: %{}
       add :project_id, references(:projects)
       timestamps()
     end
@@ -78,10 +78,10 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
       add :coverage, :string
       add :started_at, :utc_datetime
       add :finished_at, :utc_datetime
-      add :user, :map, default: "{}"
-      add :commit, :map, default: "{}"
-      add :runner, :map, default: "{}"
-      add :pipeline, :map, default: "{}"
+      add :user, :map, default: %{}
+      add :commit, :map, default: %{}
+      add :runner, :map, default: %{}
+      add :pipeline, :map, default: %{}
       add :pipeline_id, references(:pipelines)
       add :trace, :string
       timestamps()
@@ -95,8 +95,7 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
       add :state, :string,  null: false
       add :web_url, :string, null: false
       add :project_id, references(:projects)
-      add :info, :map, default: "{}"
-
+      add :info, :map, default: %{}
       timestamps()
     end
     create index(:merge_requests, [:project_id])
@@ -104,7 +103,7 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
     create table(:notes) do
       add :body, :string
       add :attachment, :string
-      add :author, :map, default: "{}"
+      add :author, :map, default: %{}
       add :system, :boolean
       add :noteable_id, :integer
       add :noteable_type, :string
@@ -115,7 +114,7 @@ defmodule LabStatEx.Repo.Migrations.CreateSchema do
     create index(:notes, [:merge_request_id])
 
     create table(:project_hooks) do
-      add :url, :string,    null: false
+      add :url, :string, null: false
       add :push_events, :boolean
       add :tag_push_events, :boolean
       add :repository_update_events, :boolean
