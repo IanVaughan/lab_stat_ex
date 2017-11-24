@@ -15,7 +15,9 @@ defmodule LabStatEx.Project do
     field :star_count, :integer
     field :forks_count, :integer
     field :last_activity_at, :utc_datetime
-    # field :info, :json , default: "{}"
+    field :info, :map , default: %{}
     timestamps()
+
+    has_many :branches, LabStatEx.Branch
   end
 end
