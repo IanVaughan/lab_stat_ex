@@ -3,7 +3,8 @@ defmodule GitLab.Users do
 
   # GET /users
 
-  @path "/users"
+  @path "/users/"
 
   def all(), do: Base.get(@path)
+  def get(id), do: Base.get(@path <> id)
 end
