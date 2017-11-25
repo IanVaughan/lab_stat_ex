@@ -4,7 +4,7 @@ defmodule LabStatEx.Project do
   schema "projects" do
     field :description, :string
     field :default_branch, :string
-    field :tag_list, :string #,  array: true
+    # field :tag_list, :string,  array: true
     field :ssh_url_to_repo, :string
     field :http_url_to_repo, :string
     field :web_url, :string

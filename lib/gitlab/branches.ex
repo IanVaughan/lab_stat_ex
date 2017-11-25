@@ -1,5 +1,5 @@
 defmodule GitLab.Branches do
-  alias GitLab.Project.Base
+  alias GitLab.Projects
 
   # GET /projects/:id/repository/branches
 
@@ -7,12 +7,12 @@ defmodule GitLab.Branches do
 
   # GitLab.Branches.all("20")
   def all(project_id) do
-    Base.project(project_id, @path)
+    Projects.get(project_id, @path)
   end
 
   # GitLab.Branches.get("20", "DEV-6183-api-orders-not-viewed2")
   def get(project_id, name) do
-    Base.project(project_id, url(name))
+    Projects.get(project_id, url(name))
   end
 
   defp url(name), do: @path <> name

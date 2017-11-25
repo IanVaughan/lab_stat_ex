@@ -1,15 +1,15 @@
-defmodule GitLab.Project.Base do
+defmodule GitLab.Projects do
   alias GitLab.Base
 
   # GET /projects/:id
 
   @path "/projects/"
 
-  def projects() do
+  def all() do
     Base.get(@path)
   end
 
-  def project(project_id, resource \\ "") do
+  def get(project_id, resource \\ "") do
     stringify(project_id)
     |> create_url(resource)
     |> Base.get

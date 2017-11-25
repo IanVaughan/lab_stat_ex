@@ -6,10 +6,7 @@ defmodule Collectors.Branches do
     |> save_all(project_id)
   end
 
-  defp save_all(branches, project_id) do
-    branches
-    |> Enum.each(fn(a) -> save_one(a, project_id) end)
-  end
+  defp save_all(items, project_id), do: Enum.each(items, fn(a) -> save_one(a, project_id) end)
 
   defp save_one(json, project_id) do
     find(json[:name], project_id)
