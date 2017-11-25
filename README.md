@@ -42,3 +42,9 @@ LabStatEx.Project |> Ecto.Query.where(path: "b") |> LabStatEx.Repo.all
 alias LabStatEx.{Repo, Project, Branch}
 
 Repo.all(Project) |> Repo.preload(:branches)
+
+
+url = "https://gitlab.quiqup.com/api/v4/projects/backend%2FCoreAPI/merge_requests?view=simple"
+headers = ["PRIVATE-TOKEN": "gF6yksySZWWgrmhdnp43"]
+options = [ssl: [{:versions, [:'tlsv1.2']}], recv_timeout: 500]
+{:ok, response} HTTPoison.get(url, headers, options)
