@@ -6,8 +6,8 @@ defmodule LabStatEx.Branch do
     field :commit, :map
     field :merged, :boolean
     field :protected, :boolean
-    field :developers_can_push #, :boolean
-    field :developers_can_merge #, :boolean
+    field :developers_can_push, :boolean
+    field :developers_can_merge, :boolean
     belongs_to :project, LabStatEx.Project
     field :recorded_old_at, :utc_datetime
     field :notified_old_at, :utc_datetime
