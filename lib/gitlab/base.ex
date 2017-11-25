@@ -19,13 +19,11 @@ defmodule GitLab.Base do
   end
 
   defp format(json) when is_list(json) do
-    json
-    |> Enum.map(fn(a) -> Enum.map(a, fn({k, v}) -> {String.to_atom(k), v} end) end)
+    json |> Enum.map(fn(a) -> format(a) end)
   end
 
   defp format(json) do
-    json
-    |> Enum.map(fn({k, v}) -> {String.to_atom(k), v} end)
+    json |> Enum.map(fn({k, v}) -> {String.to_atom(k), v} end)
   end
 
   defp headers(), do: ["PRIVATE-TOKEN": private_token()]
