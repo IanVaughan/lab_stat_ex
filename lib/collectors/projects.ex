@@ -6,14 +6,17 @@ defmodule Collectors.Projects do
     |> save_all
   end
 
-  defp save_all(items), do: Enum.each(items, fn(item) -> save_one(item) end)
+  defp save_all(items), do: Enum.map(items, fn(item) -> save_one(item) end)
 
   defp save_one(json) do
     json = timestamp(json)
     find(json[:id])
     |> change(json)
     |> Repo.insert_or_update
+    |> return_schema
   end
+
+  def return_schema({:ok, schema}), do: schema
 
   defp find(id) do
     case Repo.get_by(Project, id: id) do
