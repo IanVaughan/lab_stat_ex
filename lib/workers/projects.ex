@@ -1,4 +1,6 @@
 defmodule Workers.Projects do
+  import Logger, only: [info: 1]
+
   def perform do
     Collectors.Projects.update()
     |> enqueue_all
@@ -12,6 +14,6 @@ defmodule Workers.Projects do
   def enqueue(item) do
     IO.inspect(item.id)
     {:ok, jid} = Exq.enqueue(Exq, "default",  Workers.Project, [item.id])
-    IO.inspect("enqueued:#{jid}")
+    info "#{__MODULE__} enqueued:#{jid}"
   end
 end
