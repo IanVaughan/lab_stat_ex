@@ -20,7 +20,7 @@ defmodule LabStatEx.Mixfile do
   def application do
     [
       mod: {LabStatEx, []},
-      extra_applications: [:logger]
+      extra_applications: [:logger, :exq, :exq_ui]
     ]
   end
 
@@ -43,7 +43,9 @@ defmodule LabStatEx.Mixfile do
       {:cowboy, "~> 1.0"},
       {:poison, "~> 3.0"},
       {:httpoison, "~> 0.13"},
-      {:confex, "~> 3.3.1"}
+      {:confex, "~> 3.3.1"},
+      {:exq, "~> 0.9.1"},
+      {:exq_ui, "~> 0.9.0"}
     ]
   end
 

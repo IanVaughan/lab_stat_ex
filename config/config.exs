@@ -26,6 +26,26 @@ config :lab_stat_ex, GitLab.Base,
   api_endpoint: {:system, "GITLAB_API_ENDPOINT"},
   private_token: {:system, "GITLAB_API_PRIVATE_TOKEN"}
 
+config :exq,
+  name: Exq,
+  # host: "127.0.0.1",
+  host: "localhost",
+  port: 6379,
+  # password: "optional_redis_auth",
+  namespace: "lab_stat_ex",
+  concurrency: 5, # :infinite,
+  queues: ["default"],
+  poll_timeout: 50,
+  scheduler_poll_timeout: 200,
+  scheduler_enable: true,
+  max_retries: 5
+  # shutdown_timeout: 5000
+
+config :exq_ui,
+  web_port: 4040,
+  web_namespace: "",
+  server: true
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
