@@ -45,7 +45,9 @@ defmodule LabStatEx.Mixfile do
       {:httpoison, "~> 0.13"},
       {:confex, "~> 3.3.1"},
       {:exq, "~> 0.9.1"},
-      {:exq_ui, "~> 0.9.0"}
+      {:exq_ui, "~> 0.9.0"},
+      {:mock, "~> 0.2.0", only: :test},
+      {:mix_test_watch, "~> 0.5", only: :dev, runtime: false}
     ]
   end
 

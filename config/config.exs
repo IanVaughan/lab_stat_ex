@@ -24,7 +24,8 @@ config :logger, :console,
 
 config :lab_stat_ex, GitLab.Base,
   api_endpoint: {:system, "GITLAB_API_ENDPOINT"},
-  private_token: {:system, "GITLAB_API_PRIVATE_TOKEN"}
+  private_token: {:system, "GITLAB_API_PRIVATE_TOKEN"},
+  http_adaptor: HTTPoison
 
 config :exq,
   name: Exq,

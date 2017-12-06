@@ -6,13 +6,16 @@ defmodule Collectors.Branches do
     |> save_all(project_id)
   end
 
-  defp save_all(items, project_id), do: Enum.each(items, fn(a) -> save_one(a, project_id) end)
+  defp save_all(items, project_id), do: Enum.map(items, fn(item) -> save_one(item, project_id) end)
 
   defp save_one(json, project_id) do
     find(json[:name], project_id)
     |> change(json)
     |> Repo.insert_or_update
+    |> return_schema
   end
+
+  def return_schema({:ok, schema}), do: schema
 
   defp find(name, project_id) do
     case Repo.get_by(Branch, name: name, project_id: project_id) do
