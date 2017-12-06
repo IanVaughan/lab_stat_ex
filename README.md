@@ -1,5 +1,20 @@
 # LabStatEx
 
+Get stats about your GitLab, including :
+
+* Branches
+  * Notify committer of old branches
+  * Delete old branches on GitLab
+* TODO
+* Push counts of
+  * Projects
+  * Branches
+  * Jobs
+  * etc
+* Add comments to old MRs
+
+## Development
+
 To start your Phoenix app:
 
   * Install dependencies with `mix deps.get`
