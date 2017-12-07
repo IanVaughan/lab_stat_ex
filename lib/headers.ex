@@ -1,28 +1,34 @@
-# Takes a HTTP Response and extracts the next link from the headers
-# based on the standard "Link" key & "rel" schema
 defmodule HTTP.Headers do
+  @moduledoc """
+  Takes a HTTP Response and extracts the next link from the headers
+  based on the standard "Link" key & "rel" schema
+  """
+
   def get_next_link({:ok, response}) do
-    response.headers
-    |> Enum.find(fn({key, _b}) -> key == "Link" end)
-    |> extract_links
+    extract_links({:ok, response}, "next")
   end
 
-  defp extract_links(nil), do: nil
-  defp extract_links({"Link", links}) do
-    next_links = links
+  defp extract_links({:ok, response}, type) do
+    response.headers
+    |> Enum.find(fn({key, _b}) -> key == "Link" end)
+    |> find_group_type(type)
+    |> extract_group
+  end
+
+  defp find_group_type(nil, _), do: nil
+  defp find_group_type({"Link", links}, type) do
+    links
     |> String.split(",")
-    |> Enum.find(fn(a) -> a |> String.contains?("rel=\"next\"") end)
+    |> Enum.find(fn(a) -> a |> String.contains?("rel=\"#{type}\"") end)
+  end
 
-    split = case next_links do
-      nil -> nil
-      _ -> next_links |> String.split(";")
-    end
-
-    if split do
-      [link, _] = split
-      link = link |> String.trim |> String.trim_leading("<") |> String.trim_trailing(">")
-
-      link
-    end
+  defp extract_group(nil), do: nil
+  defp extract_group(group_of_type) do
+    group_of_type
+    |> String.split(";")
+    |> List.first
+    |> String.trim
+    |> String.trim_leading("<")
+    |> String.trim_trailing(">")
   end
 end
