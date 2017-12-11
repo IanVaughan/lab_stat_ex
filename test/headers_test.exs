@@ -3,7 +3,7 @@ defmodule HTTP.HeadersTest do
   alias HTTP.Headers, as: Subject
 
   test "when no Link key" do
-    headers = [ {"Foo", "Bar"} ]
+    headers = [{"Foo", "Bar"}]
     response = %HTTPoison.Response{headers: headers}
     next_link = Subject.get_next_link({:ok, response})
     assert next_link == nil

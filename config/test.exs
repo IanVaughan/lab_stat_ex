@@ -7,7 +7,7 @@ config :lab_stat_ex, LabStatEx.Endpoint,
   server: false
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :info
 
 # Configure your database
 config :lab_stat_ex, LabStatEx.Repo,
