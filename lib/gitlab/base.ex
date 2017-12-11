@@ -11,7 +11,6 @@ defmodule GitLab.Base do
   defp recurse(link, response \\ []) do
     raw_response = link |> http_get
 
-    # IO.inspect(raw_response)
     next_link = raw_response |> HTTP.Headers.get_next_link
 
     res = process_response_body(raw_response)

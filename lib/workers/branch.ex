@@ -14,21 +14,21 @@ defmodule Workers.Branch do
   defp process(nil), do: nil
   defp process(branch) do
     user_email = branch.commit["author_email"]
-    if user_email do
-      User
-      |> Repo.get_by(email: user_email)
-      |> create_user(branch.commit)
-      |> update_branch(branch)
-
-      info "#{__MODULE__} user:#{user_email}"
-      if branch.notified_old_at == nil do
-      else
-        # info "#{__MODULE__} user:"
-        # if branch.notified_old_at < @delete_after_notified.ago do
-        #   delete(branch)
-        # end
-      end
-    end
+    # if user_email do
+    #   User
+    #   |> Repo.get_by(email: user_email)
+    #   |> create_user(branch.commit)
+    #   |> update_branch(branch)
+    #
+    #   info "#{__MODULE__} user:#{user_email}"
+    #   if branch.notified_old_at == nil do
+    #   else
+    #     # info "#{__MODULE__} user:"
+    #     # if branch.notified_old_at < @delete_after_notified.ago do
+    #     #   delete(branch)
+    #     # end
+    #   end
+    # end
   end
 
   defp update_branch(user, branch) do
