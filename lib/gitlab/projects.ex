@@ -16,11 +16,11 @@ defmodule GitLab.Projects do
 
   def all(pid), do: cast(__MODULE__, {:projects, pid})
 
-  # def get(project_id, resource \\ "") do
-  #   stringify(project_id)
-  #   |> create_url(resource)
-  #   |> Base.get
-  # end
+  def get(project_id, resource \\ "") do
+    stringify(project_id)
+    |> create_url(resource)
+    |> Base.get
+  end
 
   # Server (callbacks)
 
@@ -35,13 +35,13 @@ defmodule GitLab.Projects do
 
   defp send_each(items, pid), do: items |> Enum.each(fn(item) -> send_one(item, pid) end)
 
-  def send_one(project, pid) do
+  defp send_one(project, pid) do
     info "#{__MODULE__} sending:#{project[:id]}"
     GenServer.cast(pid, {:project, project})
   end
 
-  # defp stringify(int_or_string) when is_integer(int_or_string), do: Integer.to_string(int_or_string)
-  # defp stringify(int_or_string), do: int_or_string
-  #
-  # defp create_url(project_id, resource), do: @path <> project_id <> resource
+  defp stringify(int_or_string) when is_integer(int_or_string), do: Integer.to_string(int_or_string)
+  defp stringify(int_or_string), do: int_or_string
+
+  defp create_url(project_id, resource), do: @path <> project_id <> resource
 end

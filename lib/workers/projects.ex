@@ -19,8 +19,10 @@ defmodule Workers.Projects do
 
   def handle_cast({:project, project}, _state) do
     info "#{__MODULE__} handle_cast:#{project[:id]}"
-    Project.save_from_json(project)
 
+    Project.save_from_json(project)
+    Workers.Project.update(project[:id])
+    
     {:noreply, []}
   end
 end

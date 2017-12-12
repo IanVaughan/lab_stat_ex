@@ -16,4 +16,24 @@ defmodule LabStatEx.Branch do
     field :delete_reason, :string
     timestamps()
   end
+
+  alias LabStatEx.{Repo, Branch}
+
+  defp save_from_json(json, project_id) do
+    find(json[:name], project_id)
+    |> change(json)
+    |> Repo.insert_or_update
+    |> return_schema
+  end
+
+  def return_schema({:ok, schema}), do: schema
+
+  defp find(name, project_id) do
+    case Repo.get_by(Branch, name: name, project_id: project_id) do
+      nil -> %Branch{}
+      rec -> rec
+    end
+  end
+
+  defp change(from, to), do: Ecto.Changeset.change(from, to)
 end

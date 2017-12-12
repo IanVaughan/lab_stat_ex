@@ -14,6 +14,7 @@ defmodule LabStatEx do
       supervisor(LabStatEx.Endpoint, []),
 
       worker(Workers.Projects, []),
+      worker(Workers.Branches, []),
       worker(GitLab.Projects, []),
     ]
 

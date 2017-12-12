@@ -16,11 +16,11 @@ defmodule GitLab.Base do
     res = process_response_body(raw_response)
     response = res ++ response
 
-    if next_link do
-      recurse(next_link, response)
-    else
+    # if next_link do
+      # recurse(next_link, response)
+    # else
       response
-    end
+    # end
   end
 
   defp create_url(resource), do: api_path() <> resource
