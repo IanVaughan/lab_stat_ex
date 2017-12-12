@@ -1,5 +1,6 @@
 defmodule LabStatEx.Project do
   use Ecto.Schema
+  alias LabStatEx.{Repo, Project}
 
   schema "projects" do
     field :description, :string
@@ -22,5 +23,29 @@ defmodule LabStatEx.Project do
     has_many :merge_requests, LabStatEx.MergeRequest
     has_many :project_hooks, LabStatEx.ProjectHook
     has_many :registries, LabStatEx.Registry
+  end
+
+  def save_from_json(json) do
+    json = timestamp(json)
+    find(json[:id])
+    |> change(json)
+    |> Repo.insert_or_update
+    |> return_schema
+  end
+
+  defp find(id) do
+    case Repo.get_by(Project, id: id) do
+      nil -> %Project{}
+      rec -> rec
+    end
+  end
+
+  def return_schema({:ok, schema}), do: schema
+
+  defp change(from, to), do: Ecto.Changeset.change(from, to)
+
+  defp timestamp(json) do
+    {:ok, dt, 0} = DateTime.from_iso8601(json[:last_activity_at])
+    Keyword.replace(json, :last_activity_at, dt)
   end
 end

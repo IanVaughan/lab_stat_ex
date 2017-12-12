@@ -12,8 +12,9 @@ defmodule LabStatEx do
       supervisor(LabStatEx.Repo, []),
       # Start the endpoint when the application starts
       supervisor(LabStatEx.Endpoint, []),
-      # Start your own worker by calling: LabStatEx.Worker.start_link(arg1, arg2, arg3)
-      # worker(LabStatEx.Worker, [arg1, arg2, arg3]),
+
+      worker(Workers.Projects, []),
+      worker(GitLab.Projects, []),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

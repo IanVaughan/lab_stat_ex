@@ -1,18 +1,26 @@
 defmodule Workers.Projects do
-  import Logger, only: [info: 1]
-  require IEx
+  use GenServer
 
-  def perform do
-    info "#{__MODULE__} perform"
-    Collectors.Projects.update()
-    |> enqueue_all
+  import Logger, only: [info: 1]
+  import GenServer, only: [start_link: 3]
+
+  alias LabStatEx.Project
+
+  # Client
+
+  def start_link, do: start_link(__MODULE__, {}, name: __MODULE__)
+
+  def update do
+    info "#{__MODULE__} update"
+    GitLab.Projects.all(__MODULE__)
   end
 
-  def enqueue_all(items), do: items |> Enum.each(fn(item) -> enqueue(item) end)
+  # Server (callbacks)
 
-  def enqueue(item) do
-    info "#{__MODULE__} enqueuing:#{item.id}"
-    {:ok, jid} = Exq.enqueue(Exq, "default",  Workers.Project, [item.id])
-    info "#{__MODULE__} enqueued:#{jid}"
+  def handle_cast({:project, project}, _state) do
+    info "#{__MODULE__} handle_cast:#{project[:id]}"
+    Project.save_from_json(project)
+
+    {:noreply, []}
   end
 end
