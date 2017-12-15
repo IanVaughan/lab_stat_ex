@@ -4,9 +4,10 @@ defmodule HTTP.Headers do
   based on the standard "Link" key & "rel" schema
   """
 
-  def get_next_link({:ok, response}) do
+  def get_next_link({:ok, response}, _current_link) do
     extract_links({:ok, response}, "next")
   end
+  def get_next_link({:error, _}, current_link), do: current_link
 
   defp extract_links({:ok, response}, type) do
     response.headers

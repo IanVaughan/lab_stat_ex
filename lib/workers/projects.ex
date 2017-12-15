@@ -13,10 +13,7 @@ defmodule Workers.Projects do
 
   def start_link, do: start_link(__MODULE__, {}, name: __MODULE__)
 
-  def update do
-    info "#{__MODULE__} update #{__MODULE__}"
-    GitLab.Projects.all(__MODULE__, :project)
-  end
+  def update, do: GitLab.Projects.all(__MODULE__, :project)
 
   # Server (callbacks)
 

@@ -36,7 +36,7 @@ defmodule GitLab.Base do
     info "#{__MODULE__} recurse:#{link}, attempt:#{attempt}/#{@max_retries}"
     raw_response = link |> http_get
 
-    # next_link = raw_response |> HTTP.Headers.get_next_link
+    next_link = raw_response |> HTTP.Headers.get_next_link(link)
 
     response = process_response_body(raw_response, link, caller, name, attempt)
 
@@ -44,7 +44,7 @@ defmodule GitLab.Base do
     GitLab.ResponseDispatcher.send(response, caller, name)
 
     info "#{__MODULE__} recurse ending:#{link}"
-    # recurse(next_link, caller, 1)
+    recurse(next_link, caller, name, 1)
   end
 
   defp create_url(resource), do: api_path() <> resource

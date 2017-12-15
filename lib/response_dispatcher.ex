@@ -14,21 +14,26 @@ defmodule GitLab.ResponseDispatcher do
 
   @doc "Send the data the the genserver for processing"
   # @spec send(list(), tuple()) :: :ok
-  def send(items, caller, name), do: cast(:send_all, {items, caller, name})
+  def send(items, caller, name), do: cast(__MODULE__, {:send_all, items, caller, name})
 
   # Server (callbacks)
 
   def handle_cast({:send_all, items, caller, name}, _state) do
+    info "#{__MODULE__} handle_cast"
     send_all(items, caller, name)
     {:noreply, []}
   end
 
+  defp send_all(nil, _caller, _name) do
+    info "#{__MODULE__} send_all nil"
+  end
   defp send_all(items, caller, name), do: items |> Enum.each(fn(item) -> send_one(item, caller, name) end)
 
   defp send_one(item, caller, name) do
-    info "#{__MODULE__} sending:#{item[:id]} to #{caller}, #{name}"
+    info "#{__MODULE__} send_one"
+    atom_name = String.to_existing_atom(name)
     caller
     |> String.to_existing_atom
-    # |> GenServer.cast({name, item})
+    |> cast({atom_name, item})
   end
 end
