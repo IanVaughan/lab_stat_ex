@@ -11,6 +11,6 @@ defmodule Workers.Project do
 
   def perform(project_id) do
     info "#{__MODULE__} perform:#{project_id}"
-    Workers.Branches.update(project_id)
+    # Workers.Branches.update(project_id)
   end
 end

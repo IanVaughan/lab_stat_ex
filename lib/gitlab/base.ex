@@ -16,35 +16,40 @@ defmodule GitLab.Base do
 
   # Client
 
-  def get(resource, caller, name) do
+  def get(resource, caller, name, recurse \\ true) do
     info "#{__MODULE__} enqueuing:#{resource}"
-    {:ok, jid} = Exq.enqueue(Exq, "request",  GitLab.Base, [resource, caller, name])
+    {:ok, jid} = Exq.enqueue(Exq, "request",  GitLab.Base, [resource, caller, name, recurse])
     info "#{__MODULE__} enqueued:#{jid}"
   end
 
   # Server (callbacks)
 
-  def perform(resource, caller, name) do
-    info "#{__MODULE__} perform start:#{resource}"
+  def perform(resource, caller, name, recurse) do
+    info "#{__MODULE__} perform:#{resource}"
+
+    caller_atom = String.to_existing_atom(caller)
+    name_atom = String.to_existing_atom(name)
+
     create_url(resource)
-    |> recurse(caller, name, 1)
-    info "#{__MODULE__} perform done:#{resource}"
+    |> recurse(caller_atom, name_atom, 1, recurse)
   end
 
   defp recurse(nil, _caller, _name, _attempt), do: nil
-  defp recurse(link, caller, name, attempt) do
-    info "#{__MODULE__} recurse:#{link}, attempt:#{attempt}/#{@max_retries}"
-    raw_response = link |> http_get
+  defp recurse(current_link, caller, name, attempt, recurse \\ true) do
+    info "#{__MODULE__} recurse:#{current_link}, attempt:#{attempt}/#{@max_retries}"
 
-    next_link = raw_response |> HTTP.Headers.get_next_link(link)
+    response = current_link |> http_get
 
-    response = process_response_body(raw_response, link, caller, name, attempt)
+    response
+    |> process_response_body(current_link, caller, name, attempt)
+    |> GitLab.ResponseDispatcher.send(caller, name)
 
-    # Task.start(fn -> send_all(response, caller) end)
-    GitLab.ResponseDispatcher.send(response, caller, name)
-
-    info "#{__MODULE__} recurse ending:#{link}"
-    recurse(next_link, caller, name, 1)
+    info "#{__MODULE__} recurse ending:#{current_link}"
+    if recurse do
+      response
+      |> HTTP.Headers.get_next_link(current_link)
+      |> recurse(caller, name, 1)
+    end
   end
 
   defp create_url(resource), do: api_path() <> resource

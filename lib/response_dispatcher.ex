@@ -14,7 +14,8 @@ defmodule GitLab.ResponseDispatcher do
 
   @doc "Send the data the the genserver for processing"
   # @spec send(list(), tuple()) :: :ok
-  def send(items, caller, name), do: cast(__MODULE__, {:send_all, items, caller, name})
+  def send(items, caller, name) when is_list(items), do: cast(__MODULE__, {:send_all, items, caller, name})
+  def send(items, caller, name), do: cast(__MODULE__, {:send_one, items, caller, name})
 
   # Server (callbacks)
 
@@ -24,16 +25,19 @@ defmodule GitLab.ResponseDispatcher do
     {:noreply, []}
   end
 
-  defp send_all(nil, _caller, _name) do
-    info "#{__MODULE__} send_all nil"
+  def handle_cast({:send_one, item, caller, name}, _state) do
+    info "#{__MODULE__} handle_cast"
+    send_one(item, caller, name)
+    {:noreply, []}
   end
+
+  defp send_all(nil, _caller, _name), do: info "#{__MODULE__} send_all nil"
+  defp send_all(:ok, _caller, _name), do: info "#{__MODULE__} send_all ok"
   defp send_all(items, caller, name), do: items |> Enum.each(fn(item) -> send_one(item, caller, name) end)
 
   defp send_one(item, caller, name) do
     info "#{__MODULE__} send_one"
-    atom_name = String.to_existing_atom(name)
     caller
-    |> String.to_existing_atom
-    |> cast({atom_name, item})
+    |> cast({name, item})
   end
 end
