@@ -5,30 +5,34 @@ defmodule Workers.Branch do
 
   # @delete_after_notified 30
 
-  def perform(branch_id) do
-    info "#{__MODULE__} perform:#{branch_id}"
-    Repo.get(Branch, branch_id, preload: :user)
+  def perform(project_id, branch_name) do
+    info "#{__MODULE__} perform aa:#{branch_name}"
+    Branch
+    |> Repo.get_by(name: branch_name, project_id: project_id)
+    |> Repo.preload(:user)
     |> process
   end
 
   defp process(nil), do: nil
   defp process(branch) do
     user_email = branch.commit["author_email"]
-    # if user_email do
-    #   User
-    #   |> Repo.get_by(email: user_email)
-    #   |> create_user(branch.commit)
-    #   |> update_branch(branch)
-    #
-    #   info "#{__MODULE__} user:#{user_email}"
-    #   if branch.notified_old_at == nil do
-    #   else
-    #     # info "#{__MODULE__} user:"
-    #     # if branch.notified_old_at < @delete_after_notified.ago do
-    #     #   delete(branch)
-    #     # end
-    #   end
-    # end
+    # info "#{__MODULE__} process:#{user_email}"
+    if user_email do
+      User
+      |> Repo.get_by(email: user_email)
+      |> create_user(branch.commit)
+      |> update_branch(branch)
+
+      # info "#{__MODULE__} user:#{user_email}"
+      if branch.notified_old_at == nil do
+        info "#{__MODULE__} process no notified_old_at"
+      else
+        info "#{__MODULE__} process user:"
+        # if branch.notified_old_at < @delete_after_notified.ago do
+        #   delete(branch)
+        # end
+      end
+    end
   end
 
   defp update_branch(user, branch) do
@@ -37,13 +41,13 @@ defmodule Workers.Branch do
     Repo.update branch
   end
 
+  # Give unknown users a high id
   defp create_user(nil, commit) do
-    # Give unknown users a high id
     count = Repo.aggregate(User, :count, :id)
     %User{id: count + 10000, email: commit["author_email"], name: commit["author_name"]}
     |> Repo.insert!
   end
-  defp create_user(_user, _commit), do: nil
+  defp create_user(user, _commit), do: user
 
   defp delete(branch) do
     info "Workers::Branch deleting branch project_id:#{branch.project.id} (#{branch.project.name}), branch:#{branch.name}, reason:#{branch.delete_reason}"

@@ -1,8 +1,15 @@
 defmodule Workers.Branches do
+  @moduledoc """
+
+  Workers.Branches.update(20)
+
+  """
   use GenServer
 
   import GenServer, only: [start_link: 3]
   import Logger, only: [info: 1]
+
+  alias LabStatEx.Branch
 
   # Client
 
@@ -18,31 +25,20 @@ defmodule Workers.Branches do
   end
 
   @doc """
-  Worker to
+  Worker to process branches
   """
   def perform(project_id) do
     info "#{__MODULE__} perform:#{project_id}"
-    GitLab.Branches.all(__MODULE__, project_id)
+    GitLab.Branches.all(project_id, %{callback: __MODULE__, key: :branch, id: project_id})
   end
 
   # Server (callbacks)
 
-  def handle_cast({:branch, branch}, _state) do
+  def handle_cast({:branch, branch, project_id}, _state) do
     info "#{__MODULE__} handle_cast:#{branch[:name]}"
 
-    # Branch.save_from_json(branch)
-    # Workers.Project.update(project[:id])
-
-    {:noreply, []}
-  end
-
-  # Server (callbacks)
-
-  def handle_cast({:project, project}, _state) do
-    info "#{__MODULE__} handle_cast:#{project[:id]}"
-
-    Project.save_from_json(project)
-    Workers.Project.update(project[:id])
+    Branch.save_from_json(branch, project_id)
+    Workers.Branch.perform(project_id, branch[:name])
 
     {:noreply, []}
   end

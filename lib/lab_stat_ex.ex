@@ -9,6 +9,7 @@ defmodule LabStatEx do
       supervisor(LabStatEx.Endpoint, []),
 
       worker(GitLab.ResponseDispatcher, []),
+      worker(Workers.Users, []),
       worker(Workers.Projects, []),
       worker(Workers.Branches, []),
       # worker(GitLab.Projects, []),

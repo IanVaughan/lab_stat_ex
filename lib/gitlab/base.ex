@@ -16,54 +16,51 @@ defmodule GitLab.Base do
 
   # Client
 
-  def get(resource, caller, name, recurse \\ true) do
+  def get(resource, caller_info, recurse \\ true) do
     info "#{__MODULE__} enqueuing:#{resource}"
-    {:ok, jid} = Exq.enqueue(Exq, "request",  GitLab.Base, [resource, caller, name, recurse])
+    {:ok, jid} = Exq.enqueue(Exq, "request",  GitLab.Base, [resource, caller_info, recurse])
     info "#{__MODULE__} enqueued:#{jid}"
   end
 
   # Server (callbacks)
 
-  def perform(resource, caller, name, recurse) do
+  def perform(resource, caller_info, recurse) do
     info "#{__MODULE__} perform:#{resource}"
 
-    caller_atom = String.to_existing_atom(caller)
-    name_atom = String.to_existing_atom(name)
-
     create_url(resource)
-    |> recurse(caller_atom, name_atom, 1, recurse)
+    |> recurse(caller_info, 1, recurse)
   end
 
-  defp recurse(nil, _caller, _name, _attempt), do: nil
-  defp recurse(current_link, caller, name, attempt, recurse \\ true) do
+  defp recurse(nil, _callername, _attempt), do: nil
+  defp recurse(current_link, caller_info, attempt, recurse \\ true) do
     info "#{__MODULE__} recurse:#{current_link}, attempt:#{attempt}/#{@max_retries}"
 
     response = current_link |> http_get
 
     response
-    |> process_response_body(current_link, caller, name, attempt)
-    |> GitLab.ResponseDispatcher.send(caller, name)
+    |> process_response_body(current_link, caller_info, attempt)
+    |> GitLab.ResponseDispatcher.send(caller_info)
 
     info "#{__MODULE__} recurse ending:#{current_link}"
     if recurse do
       response
       |> HTTP.Headers.get_next_link(current_link)
-      |> recurse(caller, name, 1)
+      |> recurse(caller_info, 1)
     end
   end
 
   defp create_url(resource), do: api_path() <> resource
   defp http_get(path), do: http_adaptor().get(path, headers())
 
-  defp process_response_body({:ok, body}, _link, _caller, _name, _attempt) do
+  defp process_response_body({:ok, body}, _link, _caller_name, _attempt) do
     body.body
     |> Poison.decode!
     |> format
   end
-  defp process_response_body({:error, _}, link, caller, name, attempt) when attempt < @max_retries do
-    recurse(link, caller, name, attempt + 1)
+  defp process_response_body({:error, _}, link, caller_info, attempt) when attempt < @max_retries do
+    recurse(link, caller_info, attempt + 1)
   end
-  defp process_response_body({:error, _}, link, _caller, _name, _attempt) do
+  defp process_response_body({:error, _}, link, _caller_name, _attempt) do
     info "#{__MODULE__} Gave up on:#{link}"
   end
 

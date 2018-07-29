@@ -19,7 +19,7 @@ defmodule LabStatEx.Branch do
 
   alias LabStatEx.{Repo, Branch}
 
-  defp save_from_json(json, project_id) do
+  def save_from_json(json, project_id) do
     find(json[:name], project_id)
     |> change(json)
     |> Repo.insert_or_update
@@ -30,7 +30,7 @@ defmodule LabStatEx.Branch do
 
   defp find(name, project_id) do
     case Repo.get_by(Branch, name: name, project_id: project_id) do
-      nil -> %Branch{}
+      nil -> %Branch{project_id: project_id}
       rec -> rec
     end
   end
